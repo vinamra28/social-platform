@@ -3,7 +3,10 @@ const gravatar = require("gravatar");
 const bcrypt = require("bcryptjs"); //for hashing the password
 const jwt = require("jsonwebtoken");
 const keys = require("../config/keys");
-const passport = require("passport");
+
+//load input validation
+const validateRegisterInput = require("../validations/register");
+const validateLoginInput = require("../validations/login");
 
 //load User model
 const UserModel = require("../models/user");
@@ -20,11 +23,15 @@ class User {
       return Promise.reject(e);
     }
   }
-  /**
-   * register
-   */
+
   async createUser(userDetails) {
     try {
+      const { errors, isValid } = validateRegisterInput(userDetails);
+
+      if (!isValid) {
+        return errors;
+      }
+
       let result = await UserModel.findOne({ email: userDetails.email });
       if (result) {
         return Promise.reject(
@@ -55,6 +62,12 @@ class User {
 
   async loginUser(req) {
     try {
+      const { errors, isValid } = validateLoginInput(req);
+
+      // Check Validation
+      if (!isValid) {
+        return errors;
+      }
       const email = req.email;
       const password = req.password;
       let result = await UserModel.findOne({ email: email });
