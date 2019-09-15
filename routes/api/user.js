@@ -6,11 +6,11 @@ const User = require("../../controllers/user");
 const passport = require("passport");
 
 /**
- * @route   GET api/user/
+ * @route   GET api/user/test
  * @desc    Tests users route
  * @access  Public
  */
-router.get("/", async (req, res) => {
+router.get("/test", async (req, res) => {
   try {
     let userService = new User();
     let response = await userService.testUser();
@@ -61,8 +61,10 @@ router.get(
   passport.authenticate("jwt", { session: false }),
   async (req, res) => {
     try {
-      let userService = new User();
-      let response = await userService.testUser();
+      let response = {};
+      response.id = req.user.id;
+      response.name = req.user.name;
+      response.email = req.user.email;
       apiHandler(req, res, Promise.resolve(response));
     } catch (err) {
       console.log(err);

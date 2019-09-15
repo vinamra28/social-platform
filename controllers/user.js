@@ -52,7 +52,8 @@ class User {
         var salt = bcrypt.genSaltSync(10);
         newUser.password = bcrypt.hashSync(newUser.password, salt);
         let result = await newUser.save();
-        return { message: "User added successfully" };
+        // return { message: "User added successfully" };
+        return result;
       }
     } catch (e) {
       console.log(e);
@@ -72,7 +73,7 @@ class User {
       const password = req.password;
       let result = await UserModel.findOne({ email: email });
       if (!result) {
-        return Promise.reject(Error.badRequest("Email not registered!!"));
+        return Promise.reject(Error.notFound("Email not registered!!"));
       }
       let isMatch = await bcrypt.compare(password, result.password);
       if (isMatch) {
