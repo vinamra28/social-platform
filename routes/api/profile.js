@@ -31,7 +31,7 @@ router.get(
   async (req, res) => {
     try {
       let profileService = new Profile();
-      let response = await profileService.getProfile(req);
+      let response = await profileService.getProfile(req.user);
       apiHandler(req, res, Promise.resolve(response));
     } catch (err) {
       apiHandler(req, res, Promise.reject(err));
@@ -49,9 +49,10 @@ router.post(
   async (req, res) => {
     try {
       let profileService = new Profile();
-      let response = await profileService.createProfile(req.user.id, req.body);
+      let response = await profileService.createProfile(req.user, req.body);
       apiHandler(req, res, Promise.resolve(response));
     } catch (err) {
+      console.log("main error");
       apiHandler(req, res, Promise.reject(err));
     }
   }
