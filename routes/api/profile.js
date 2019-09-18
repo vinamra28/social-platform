@@ -40,7 +40,7 @@ router.get(
 );
 /**
  * @route POST api/profile
- * @desc Create user profile
+ * @desc Create or edit user profile
  * @access Private
  */
 router.post(
@@ -57,5 +57,47 @@ router.post(
     }
   }
 );
+/**
+ * @route GET api/profile/handle/:handle
+ * @desc Get profile by handle
+ * @access Public
+ */
+router.get("/handle/:handle", async (req, res) => {
+  try {
+    let profileService = new Profile();
+    let response = await profileService.getProfileByHandle(req.params.handle);
+    apiHandler(req, res, Promise.resolve(response));
+  } catch (err) {
+    apiHandler(req, res, Promise.reject(err));
+  }
+});
+/**
+ * @route GET api/profile/user/:id
+ * @desc Get profile by user ID
+ * @access Public
+ */
+router.get("/user/:id", async (req, res) => {
+  try {
+    let profileService = new Profile();
+    let response = await profileService.getProfileById(req.params.id);
+    apiHandler(req, res, Promise.resolve(response));
+  } catch (err) {
+    apiHandler(req, res, Promise.reject(err));
+  }
+});
+/**
+ * @route GET api/profile/all
+ * @desc Get all profiles
+ * @access Public
+ */
+router.get("/all", async (req, res) => {
+  try {
+    let profileService = new Profile();
+    let response = await profileService.getAllProfiles();
+    apiHandler(req, res, Promise.resolve(response));
+  } catch (err) {
+    apiHandler(req, res, Promise.reject(err));
+  }
+});
 
 module.exports = router;

@@ -111,6 +111,69 @@ class Profile {
       return Promise.reject(err);
     }
   }
+  /**
+   * @route GET api/profile/handle/:handle
+   * @desc Get profile by handle
+   * @access Public
+   */
+  async getProfileByHandle(handleId) {
+    try {
+      let result = await ProfileModel.findOne({ handle: handleId }).populate(
+        "user",
+        ["name", "avatar"]
+      );
+      if (!result) {
+        return Promise.reject(
+          Error.notFound("There is no profile for this user")
+        );
+      }
+      return result;
+    } catch (err) {
+      return Promise.reject(err);
+    }
+  }
+  /**
+   * @route GET api/profile/user/:id
+   * @desc Get profile by user ID
+   * @access Public
+   */
+  async getProfileById(userID) {
+    try {
+      let result = await ProfileModel.findOne({ user: userID }).populate(
+        "user",
+        ["name", "avatar"]
+      );
+      if (!result) {
+        return Promise.reject(
+          Error.notFound("There is no profile for this user")
+        );
+      }
+      return result;
+    } catch (err) {
+      return Promise.reject(
+        Error.notFound("There is no profile for this user")
+      );
+    }
+  }
+  /**
+   * @route GET api/profile/all
+   * @desc Get all profiles
+   * @access Public
+   */
+  async getAllProfiles() {
+    try {
+      let results = await ProfileModel.find().populate("user", [
+        "name",
+        "avatar"
+      ]);
+      if (!results) {
+        return Promise.reject(Error.notFound("There are no profiles"));
+      }
+      return results;
+    } catch (err) {
+      return Promise.reject(Error.notFound("There are no profiles"));
+    }
+  }
 }
 
 module.exports = Profile;
