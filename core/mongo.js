@@ -17,7 +17,7 @@ module.exports = function() {
     logger.info("Connecting to Mongo " + config.mongoURI + "...");
     db = mongoose.connect(
       config.mongoURI,
-      { useNewUrlParser: true },
+      { useNewUrlParser: true, useFindAndModify: false },
       function mongoAfterConnect(err) {
         if (err) {
           logger.error("Could not connect to MongoDB!");

@@ -244,6 +244,70 @@ class Profile {
       return Promise.reject(Error.internal("Problem adding new education"));
     }
   }
+  /**
+   * @route DELETE api/profile/experience/exp_id
+   * @desc Delete Experience from profile
+   * @access Private
+   */
+  async deleteExperience(userId, expId) {
+    try {
+      let currentUser = await ProfileModel.findOne({ user: userId.id });
+
+      //Get remove index
+      const removeIndex = currentUser.experience
+        .map(item => item.id)
+        .indexOf(expId);
+
+      //splice out the array
+      currentUser.experience.splice(removeIndex, 1);
+
+      //Save
+      currentUser = await currentUser.save();
+      return currentUser;
+    } catch (err) {
+      return Promise.reject(Error.notFound(err));
+    }
+  }
+  /**
+   * @route DELETE api/profile/education/edu_id
+   * @desc Delete Education from profile
+   * @access Private
+   */
+  async deleteEducation(userId, eduId) {
+    try {
+      let currentUser = await ProfileModel.findOne({ user: userId.id });
+
+      //Get remove index
+      const removeIndex = currentUser.education
+        .map(item => item.id)
+        .indexOf(eduId);
+
+      //splice out the array
+      currentUser.education.splice(removeIndex, 1);
+
+      //Save
+      currentUser = await currentUser.save();
+      return currentUser;
+    } catch (err) {
+      return Promise.reject(Error.notFound(err));
+    }
+  }
+  /**
+   * @route DELETE api/profile
+   * @desc Delete user and profile
+   * @access Private
+   */
+  async deleteProfile(userId) {
+    try {
+      // let status = ProfileModel.findOneAndRemove({ user: userId.id });
+      let status2 = UserModel.findOneAndRemove({ _id: userId.id });
+      // console.log(status);
+      console.log(status2);
+      return { success: true };
+    } catch (err) {
+      return Promise.reject(Error.internal("problem with the server"));
+    }
+  }
 }
 
 module.exports = Profile;
