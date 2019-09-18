@@ -5,6 +5,8 @@ const UserModel = require("../models/user");
 
 //Load Validation
 const validateProfileInput = require("../validations/profile");
+const validateExperienceInput = require("../validations/experience");
+const validateEducationInput = require("../validations/education");
 
 class Profile {
   /**
@@ -104,7 +106,7 @@ class Profile {
           return Promise.reject(Error.badRequest("That handle already exists"));
         }
         const newProfile = new ProfileModel(profileFields);
-        let result = newProfile.save();
+        let result = await newProfile.save();
         return result;
       }
     } catch (err) {
@@ -172,6 +174,74 @@ class Profile {
       return results;
     } catch (err) {
       return Promise.reject(Error.notFound("There are no profiles"));
+    }
+  }
+  /**
+   * @route POST api/profile/experience
+   * @desc Add Experience to profile
+   * @access Private
+   */
+  async addExperince(userId, experience) {
+    try {
+      const { errors, isValid } = validateExperienceInput(experience);
+
+      if (!isValid) {
+        return Promise.reject(Error.badRequest(errors));
+      }
+
+      const newExperience = {
+        title: experience.title,
+        company: experience.company,
+        location: experience.location,
+        from: experience.from,
+        to: experience.to,
+        current: experience.current,
+        description: experience.description
+      };
+      let result = await ProfileModel.findOne({ user: userId.id });
+      if (result) {
+        result.experience.unshift(newExperience);
+        let updated = await result.save();
+        if (updated) {
+          return updated;
+        }
+      }
+    } catch (err) {
+      return Promise.reject(Error.internal("Problem adding new experience"));
+    }
+  }
+  /**
+   * @route POST api/profile/education
+   * @desc Add Education to profile
+   * @access Private
+   */
+  async addEducation(userId, education) {
+    try {
+      const { errors, isValid } = validateEducationInput(education);
+
+      if (!isValid) {
+        return Promise.reject(Error.badRequest(errors));
+      }
+
+      const newEducation = {
+        school: education.school,
+        degree: education.degree,
+        fieldOfStudy: education.fieldOfStudy,
+        from: education.from,
+        to: education.to,
+        current: education.current,
+        description: education.description
+      };
+      let result = await ProfileModel.findOne({ user: userId.id });
+      if (result) {
+        result.education.unshift(newEducation);
+        let updated = await result.save();
+        if (updated) {
+          return updated;
+        }
+      }
+    } catch (err) {
+      return Promise.reject(Error.internal("Problem adding new education"));
     }
   }
 }

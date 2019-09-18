@@ -99,5 +99,41 @@ router.get("/all", async (req, res) => {
     apiHandler(req, res, Promise.reject(err));
   }
 });
+/**
+ * @route POST api/profile/experience
+ * @desc Add Experience to profile
+ * @access Private
+ */
+router.post(
+  "/experience",
+  passport.authenticate("jwt", { session: false }),
+  async (req, res) => {
+    try {
+      const profileService = new Profile();
+      let response = await profileService.addExperince(req.user, req.body);
+      apiHandler(req, res, Promise.resolve(response));
+    } catch (err) {
+      apiHandler(req, res, Promise.reject(err));
+    }
+  }
+);
+/**
+ * @route POST api/profile/education
+ * @desc Add Education to profile
+ * @access Private
+ */
+router.post(
+  "/education",
+  passport.authenticate("jwt", { session: false }),
+  async (req, res) => {
+    try {
+      const profileService = new Profile();
+      let response = await profileService.addEducation(req.user, req.body);
+      apiHandler(req, res, Promise.resolve(response));
+    } catch (err) {
+      apiHandler(req, res, Promise.reject(err));
+    }
+  }
+);
 
 module.exports = router;
