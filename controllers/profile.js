@@ -299,11 +299,14 @@ class Profile {
    */
   async deleteProfile(userId) {
     try {
-      // let status = ProfileModel.findOneAndRemove({ user: userId.id });
-      let status2 = UserModel.findOneAndRemove({ _id: userId.id });
-      // console.log(status);
-      console.log(status2);
-      return { success: true };
+      let status = await ProfileModel.findOneAndRemove({ user: userId.id });
+      if (status) {
+        let status2 = await UserModel.findByIdAndDelete(userId.id);
+        if (status2) {
+          return { success: true };
+        }
+      }
+      return { success: false };
     } catch (err) {
       return Promise.reject(Error.internal("problem with the server"));
     }
