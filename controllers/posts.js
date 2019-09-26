@@ -1,7 +1,7 @@
 const Error = require("../errors");
 
 //load input validation
-const validatePostInput = require("../validations/post");
+const validatePostInput = require("../validations/posts");
 
 //load Post model
 const PostModel = require("../models/post");
