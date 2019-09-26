@@ -1,24 +1,18 @@
 const Error = require("../errors");
-//const Error = require("../errors");
-const gravatar = require("gravatar");
-const bcrypt = require("bcryptjs"); //for hashing the password
-const jwt = require("jsonwebtoken");
-const keys = require("../config/keys");
 
 //load input validation
-const validateRegisterInput = require("../validations/register");
-const validateLoginInput = require("../validations/login");
 const validatePostInput = require("../validations/post");
 
-//load User model
-const UserModel = require("../models/user");
+//load Post model
 const PostModel = require("../models/post");
 
 class Posts {
   /**
-   * just a simple test function to test the API controller
+   * @route   GET api/posts/test
+   * @desc    Tests posts route
+   * @access  Public
    */
-  async testUser() {
+  async testProfile() {
     try {
       return { msg: "posts works" };
     } catch (e) {
@@ -26,26 +20,30 @@ class Posts {
       return Promise.reject(e);
     }
   }
-  async createPost(userId,userbody){
+  /**
+   * @route   POST api/posts/
+   * @desc    Create post
+   * @access  Private
+   */
+  async createPost(userId, userbody) {
     try {
-      //validate user details
+      //validate post data
       const { errors, isValid } = validatePostInput(userbody);
 
       if (!isValid) {
         return Promise.reject(Error.badRequest(errors));
       }
-   const postFields = {};
-   postFields.user = userId.id;
-   postFields.text = userbody.text;
-   if (userbody.name) postFields.name = userbody.name;
-   //let foundUser = await PostModel.findOne({ user: userId.id });
-   const newPost = new PostModel(postFields);
-        let result = newPost.save();
-        return result;
+      const postFields = {};
+      postFields.user = userId.id;
+      postFields.text = userbody.text;
+      if (userbody.name) postFields.name = userbody.name;
+      if (userbody.name) postFields.avatar = userbody.name;
+      const newPost = new PostModel(postFields);
+      let result = newPost.save();
+      return result;
+    } catch (err) {
+      return Promise.reject(Error.internal("Internal server error"));
     }
-   catch (err) {
-      return Promise.reject(err);
   }
- }
 }
- module.exports = Posts;
+module.exports = Posts;

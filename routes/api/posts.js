@@ -20,33 +20,24 @@ router.get("/test", async (req, res) => {
     apiHandler(req, res, Promise.reject(err));
   }
 });
-
+/**
+ * @route   POST api/posts/
+ * @desc    Create post
+ * @access  Private
+ */
 router.post(
-
   "/",
-
   passport.authenticate("jwt", { session: false }),
-
   async (req, res) => {
-
     try {
-
       let postsService = new Posts();
-
       let response = await postsService.createPost(req.user, req.body);
-
       apiHandler(req, res, Promise.resolve(response));
-
     } catch (err) {
-
       console.log(err);
-
       apiHandler(req, res, Promise.reject(err));
-
     }
-
   }
-
 );
 
 module.exports = router;
