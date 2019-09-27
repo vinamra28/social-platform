@@ -39,5 +39,46 @@ router.post(
     }
   }
 );
+/**
+ * @route GET api/post/user/:id
+ * @desc Get post by user ID
+ * @access Public
+ */
+router.get("/post/:id", async (req, res) => {
+  try {
+    let postService = new Posts();
+    let response = await postService.getPostById(req.params.id);
+    apiHandler(req, res, Promise.resolve(response));
+  } catch (err) {
+    apiHandler(req, res, Promise.reject(err));
+  }
+});
+router.delete(
+  "/:id",
+  passport.authenticate("jwt", { session: false }),
+  async (req, res) => {
+    try {
+      const postService = new Posts();
+      let response = await postService.deletePostById(req.user, req.params.id);
+      apiHandler(req, res, Promise.resolve(response));
+    } catch (err) {
+      apiHandler(req, res, Promise.reject(err));
+    }
+  }
+);
+/**
+ * @route GET api/post/all
+ * @desc Get all post
+ * @access Public
+ */
+router.get("/all", async (req, res) => {
+  try {
+    let postService = new Post();
+    let response = await postService.getAllPost();
+    apiHandler(req, res, Promise.resolve(response));
+  } catch (err) {
+    apiHandler(req, res, Promise.reject(err));
+  }
+});
 
 module.exports = router;

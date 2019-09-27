@@ -5,6 +5,7 @@ const validatePostInput = require("../validations/posts");
 
 //load Post model
 const PostModel = require("../models/post");
+const ProfileModel = require("../models/profile");
 
 class Posts {
   /**
@@ -43,6 +44,65 @@ class Posts {
       return result;
     } catch (err) {
       return Promise.reject(Error.internal("Internal server error"));
+    }
+  }
+  async getPostById(postId) {
+    try {
+      let result = await PostModel.findById(postId);
+      if (!result) {
+        return Promise.reject(
+          Error.notFound("There is no post for this user")
+        );
+      }
+      return result;
+    } catch (err) {
+      return Promise.reject(
+        Error.notFound("There is no post for this user")
+      );
+    }
+  }
+  /**
+     * @route DELETE api/post
+     * @desc Delete post
+     * @access Private
+     */
+  async deletePostById(userId, postId) {
+    try {
+      let userProfile = await ProfileModel.findOne({ user: userId.id });
+      if (userProfile) {
+        let userPost = await PostModel.findById(postId);
+        if (userPost.user.toString() != userId.id) {
+          return Promise.reject(Error.unauthorized("user not authorized"));
+        }
+        let userdeleted = userPost.remove();
+        if (userdeleted) {
+          return { success: true };
+        }
+        else {
+          return { success: false };
+        }
+      }
+      else {
+        return Promise.reject(Error.badRequest("post not found"));
+      }
+    } catch (err) {
+      return Promise.reject(Error.internal("problem with the server"));
+    }
+  }
+  /**
+  * @route GET api/post/all
+  * @desc Get all post
+  * @access Public
+  */
+  async getAllPost() {
+    try {
+      let results = await PostModel.find().sorted({ date: -1 });
+      if (!results) {
+        return Promise.reject(Error.notFound("There are no post"));
+      }
+      return results;
+    } catch (err) {
+      return Promise.reject(Error.notFound("There are no post"));
     }
   }
 }
