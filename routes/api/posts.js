@@ -6,8 +6,8 @@ const Posts = require("../../controllers/posts");
 const passport = require("passport");
 
 /**
- * @route   GET api/user/test
- * @desc    Tests users route
+ * @route   GET api/posts/test
+ * @desc    Tests posts route
  * @access  Public
  */
 router.get("/test", async (req, res) => {
@@ -40,11 +40,25 @@ router.post(
   }
 );
 /**
- * @route GET api/post/user/:id
- * @desc Get post by user ID
+ * @route GET api/posts/
+ * @desc Get all post
  * @access Public
  */
-router.get("/post/:id", async (req, res) => {
+router.get("/", async (req, res) => {
+  try {
+    let postService = new Posts();
+    let response = await postService.getAllPost();
+    apiHandler(req, res, Promise.resolve(response));
+  } catch (err) {
+    apiHandler(req, res, Promise.reject(err));
+  }
+});
+/**
+ * @route GET api/posts/:id
+ * @desc Get post by post ID
+ * @access Public
+ */
+router.get("/:id", async (req, res) => {
   try {
     let postService = new Posts();
     let response = await postService.getPostById(req.params.id);
@@ -53,6 +67,11 @@ router.get("/post/:id", async (req, res) => {
     apiHandler(req, res, Promise.reject(err));
   }
 });
+/**
+ * @route DELETE api/posts/:id
+ * @desc Delete the post by ID
+ * @access Private
+ */
 router.delete(
   "/:id",
   passport.authenticate("jwt", { session: false }),
@@ -66,19 +85,5 @@ router.delete(
     }
   }
 );
-/**
- * @route GET api/post/all
- * @desc Get all post
- * @access Public
- */
-router.get("/all", async (req, res) => {
-  try {
-    let postService = new Post();
-    let response = await postService.getAllPost();
-    apiHandler(req, res, Promise.resolve(response));
-  } catch (err) {
-    apiHandler(req, res, Promise.reject(err));
-  }
-});
 
 module.exports = router;

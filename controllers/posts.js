@@ -46,63 +46,63 @@ class Posts {
       return Promise.reject(Error.internal("Internal server error"));
     }
   }
+  /**
+   * @route GET api/posts/:id
+   * @desc Get post by post ID
+   * @access Public
+   */
   async getPostById(postId) {
     try {
       let result = await PostModel.findById(postId);
       if (!result) {
-        return Promise.reject(
-          Error.notFound("There is no post for this user")
-        );
+        return Promise.reject(Error.notFound("There is no post for this user"));
       }
       return result;
     } catch (err) {
-      return Promise.reject(
-        Error.notFound("There is no post for this user")
-      );
+      return Promise.reject(Error.notFound("There is no post for this user"));
     }
   }
   /**
-     * @route DELETE api/post
-     * @desc Delete post
-     * @access Private
-     */
+   * @route DELETE api/posts/:id
+   * @desc Delete the post by ID
+   * @access Private
+   */
   async deletePostById(userId, postId) {
     try {
       let userProfile = await ProfileModel.findOne({ user: userId.id });
       if (userProfile) {
         let userPost = await PostModel.findById(postId);
-        if (userPost.user.toString() != userId.id) {
+        if (userPost.user.toString() !== userId.id) {
           return Promise.reject(Error.unauthorized("user not authorized"));
         }
-        let userdeleted = userPost.remove();
-        if (userdeleted) {
+        let userDeleted = userPost.remove();
+        if (userDeleted) {
           return { success: true };
-        }
-        else {
+        } else {
           return { success: false };
         }
-      }
-      else {
-        return Promise.reject(Error.badRequest("post not found"));
+      } else {
+        return Promise.reject(Error.badRequest("User not found"));
       }
     } catch (err) {
       return Promise.reject(Error.internal("problem with the server"));
     }
   }
   /**
-  * @route GET api/post/all
-  * @desc Get all post
-  * @access Public
-  */
+   * @route GET api/posts/
+   * @desc Get all post
+   * @access Public
+   */
   async getAllPost() {
     try {
-      let results = await PostModel.find().sorted({ date: -1 });
+      let results = await PostModel.find().sort({ date: -1 });
+      console.log(results);
       if (!results) {
         return Promise.reject(Error.notFound("There are no post"));
       }
       return results;
     } catch (err) {
-      return Promise.reject(Error.notFound("There are no post"));
+      return Promise.reject(Error.internal("Problem with the server"));
     }
   }
 }
