@@ -6,5 +6,5 @@ This is a MERN stack based social media project for developers.
 Steps to run the project on localhost:-
 
 - npm install
-- client-install
+- npm client-install
 - npm run dev
