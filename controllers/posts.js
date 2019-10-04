@@ -108,11 +108,8 @@ class Posts {
   /**
   
      * @route POST api/posts/like/:id
-  
      * @desc Like the post
-  
      * @access Private
-  
      */
   async likePost(userId, postId) {
     try {
@@ -120,98 +117,60 @@ class Posts {
       if (likerProfile) {
         let post = await PostModel.findById(postId);
         if (post) {
-          if (post.likes.filter(like => like.user.toString() === userId.id).length() > 0) {
-            return Promise.reject(Error.badRequest("User already liked this post"));
+          if (
+            post.likes
+              .filter(like => like.user.toString() === userId.id)
+              .length() > 0
+          ) {
+            return Promise.reject(
+              Error.badRequest("User already liked this post")
+            );
           }
           post.likes.unshift({ user: userId.id });
           let result = await post.save();
           return result;
-
         } else {
           return Promise.reject(Error.badRequest("No post found"));
-
         }
-
       }
-
     } catch (err) {
-
       return Promise.reject(Error.internal("Problem with server"));
-
     }
-
   }
-
   /**
-  
    * @route POST api/posts/like/:id
-  
    * @desc Like the post
-  
    * @access Private
-  
    */
-
   async dislikePost(userId, postId) {
-
     try {
-
       let likerProfile = await ProfileModel.findOne({ user: userId.id });
-
       if (likerProfile) {
-
         let post = await PostModel.findById(postId);
-
         if (post) {
-
           if (
-
             post.likes
-
               .filter(like => like.user.toString() === userId.id)
-
               .length() === 0
-
           ) {
-
             return Promise.reject(
-
               Error.badRequest("You have not yet liked this post")
-
             );
-
           }
-
           // Get remove index
-
           const removeIndex = post.likes
-
             .map(item => item.user.toString())
-
             .indexOf(req.user.id);
-
-
-
           // Splice out of array
-
           post.likes.splice(removeIndex, 1);
-
           let result = await post.save();
-
           return result;
-
         } else {
-
           return Promise.reject(Error.badRequest("No post found"));
-
         }
-
       }
-
     } catch (err) {
-
       return Promise.reject(Error.internal("Problem with server"));
-
     }
   }
   /**
@@ -271,6 +230,5 @@ class Posts {
       return Promise.reject(Error.notFound("No post found"));
     }
   }
-
 }
 module.exports = Posts;

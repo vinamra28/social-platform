@@ -86,75 +86,40 @@ router.delete(
   }
 );
 /**
-
  * @route POST api/posts/like/:id
-
  * @desc Like the post
-
  * @access Private
-
  */
-
 router.post(
-
   "/like/:id",
-
   passport.authenticate("jwt", { session: false }),
-
   async (req, res) => {
-
     try {
-
       const postsService = new Posts();
-
       let response = await postsService.likePost(req.user, req.params.id);
-
       apiHandler(req, res, Promise.resolve(response));
-
     } catch (err) {
-
       apiHandler(req, res, Promise.reject(err));
-
     }
-
   }
-
 );
-
 /**
-
  * @route POST api/posts/dislike/:id
-
  * @desc Dislike the post
-
  * @access Private
-
  */
-
 router.post(
-
   "/dislike/:id",
-
   passport.authenticate("jwt", { session: false }),
-
   async (req, res) => {
-
     try {
-
       const postsService = new Posts();
-
       let response = await postsService.dislikePost(req.user, req.params.id);
-
       apiHandler(req, res, Promise.resolve(response));
-
     } catch (err) {
-
       apiHandler(req, res, Promise.reject(err));
-
     }
-
   }
-
 );
 /**
  * @route POST api/posts/comment/:id
