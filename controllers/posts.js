@@ -214,5 +214,33 @@ class Posts {
 
     }
   }
+  /**
+   * @route POST api/posts/comment/:id
+   * @desc Add a comment to the post
+   * @access Private
+   */
+  async addComment(userId, postId, comments) {
+    try {
+      const { errors, isValid } = validatePostInput(comments);
+      if (!isValid) {
+        return Promise.reject(Error.badRequest(errors));
+      }
+      let myPost = PostModel.findById(postId);
+      if (myPost) {
+        const newComment = {
+          text: comments.text,
+          name: comments.name,
+          avatar: comments.avatar,
+          user: userId.id
+        };
+        myPost.comments.unshift(newComment);
+        let result = myPost.save();
+        return result;
+      }
+    } catch (err) {
+      return Promise.reject(Error.badRequest("Post not found"));
+    }
+  }
+
 }
 module.exports = Posts;

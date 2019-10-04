@@ -156,6 +156,27 @@ router.post(
   }
 
 );
-
+/**
+ * @route POST api/posts/comment/:id
+ * @desc Add a comment to the post
+ * @access Private
+ */
+router.post(
+  "/comment/:id",
+  passport.authenticate("jwt", { session: false }),
+  async (req, res) => {
+    try {
+      const postsService = new Posts();
+      let response = await postsService.addComment(
+        req.user,
+        req.params.id,
+        req.body
+      );
+      apiHandler(req, res, Promise.resolve(response));
+    } catch (err) {
+      apiHandler(req, res, Promise.reject(err));
+    }
+  }
+);
 
 module.exports = router;
