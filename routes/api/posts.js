@@ -178,5 +178,23 @@ router.post(
     }
   }
 );
+/**
+ * @route DELETE api/posts/comment/:id/:comment_id
+ * @desc Remove a comment from the post
+ * @access Private
+ */
+router.delete(
+  "/comment/:id/:comment_id",
+  passport.authenticate("jwt", { session: false }),
+  async (req, res) => {
+    try {
+      const postsService = new Posts();
+      let response = await postsService.deleteComment(req.user, req.params);
+      apiHandler(req, res, Promise.resolve(response));
+    } catch (err) {
+      apiHandler(req, res, Promise.reject(err));
+    }
+  }
+);
 
 module.exports = router;

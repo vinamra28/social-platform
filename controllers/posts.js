@@ -241,6 +241,36 @@ class Posts {
       return Promise.reject(Error.badRequest("Post not found"));
     }
   }
+  /**
+   * @route DELETE api/posts/comment/:id/:comment_id
+   * @desc Remove a comment from the post
+   * @access Private
+   */
+  async deleteComment(userId, params) {
+    try {
+      let myPost = await PostModel.findById(params.id);
+      if (myPost) {
+        // Check to see if comment exists
+        if (
+          myPost.comments.filter(
+            comment => comment._id.toString() === params.comment_id
+          ).length === 0
+        ) {
+          return Promise.reject(Error.notFound("Comment does not exist"));
+        }
+        // Get remove index
+        const removeIndex = myPost.comments
+          .map(item => item._id.toString())
+          .indexOf(params.comment_id);
+
+        // Splice comment out of array
+        myPost.comments.splice(removeIndex, 1);
+        return await myPost.save();
+      }
+    } catch (err) {
+      return Promise.reject(Error.notFound("No post found"));
+    }
+  }
 
 }
 module.exports = Posts;
