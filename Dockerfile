@@ -12,8 +12,6 @@ ENV NODE_ENV=${NODE_ENV}
 ARG DB_URI=localhost:27017
 ENV DB_URI=${DB_URI}
 
-# TODO: add DB uri in the future
-
 WORKDIR /usr/src/app
 
 COPY package*.json ./
