@@ -1,0 +1,28 @@
+# "docker-compose up" to start the services
+version: "3"
+services:
+  mongo:
+    container_name: mongo
+    image: mongo
+    restart: unless-stopped
+    volumes:
+      - db-data:/data/db
+    networks:
+      - db-network
+  app:
+    container_name: app
+    depends_on:
+      - "mongo"
+    restart: unless-stopped # Always restart the container unless it is stopped
+    ports:
+      - "5000:5000" # Publish the port 5000 for the server
+    environment:
+      - DB_URI=mongo # Use the Docker DNS to resolve the ip of mongo container
+    build: . # Build the server at start
+    networks:
+      - db-network
+volumes:
+  db-data: {}
+networks:
+  db-network:
+    driver: bridge
