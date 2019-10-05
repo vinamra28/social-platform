@@ -9,7 +9,8 @@ ENV PORT=${PORT}
 ARG NODE_ENV=production
 ENV NODE_ENV=${NODE_ENV}
 
-# TODO: add DB uri in the future
+ARG DB_URI=localhost:27017
+ENV DB_URI=${DB_URI}
 
 WORKDIR /usr/src/app
 
