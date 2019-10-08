@@ -9,7 +9,7 @@ services:
       - db-data:/data/db
     networks:
       - db-network
-  app:
+  app: &base
     container_name: app
     depends_on:
       - "mongo"
@@ -21,6 +21,21 @@ services:
     build: . # Build the server at start
     networks:
       - db-network
+  client:
+    <<: *base
+    container_name: client
+    ports:
+      - "5000:5000"
+      - "3000:3000"
+    environment:
+      - NODE_ENV=development # required to get nodemon working
+      - DB_URI=mongo
+    volumes: # these volume mount greatly speed up the build time
+      - '.:/usr/src/app'
+      - '/usr/src/app/node_modules' # allowing access to host directory node_modules
+      - '/usr/src/app/client/node_modules' # allowing access to client node_modules
+    command: sh -c "npm install && npm run client-install && npm run dev" # overriding dockerfile command to install client
+
 volumes:
   db-data: {}
 networks:
